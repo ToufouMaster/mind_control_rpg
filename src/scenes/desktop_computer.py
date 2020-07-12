@@ -46,13 +46,25 @@ class Windows(Scene):
     min_y_size = 5
     windows = []
 
-    def add_window(self, apk_name = "File Manager", x_pos = 0, y_pos = 0, x_size = 40, y_size = 15):
+    def add_window(self, apk_nmb = 0, x_pos = 0, y_pos = 0, x_size = 40, y_size = 15):
         z = len(self.windows)
-        self.windows.append((apk_name, x_pos, y_pos, x_size, y_size))
+        self.windows.append([apk_nmb, x_pos, y_pos, x_size, y_size])
+
+    def remove_window(self, window_nmb):
+        del self.windows[window_nmb]
 
     def check_on_click_close(self, mouse_x : int, mouse_y : int, pos_x : int, pos_y : int, x_size : int):
         if mouse_x == pos_x+x_size-3:
             if mouse_y == pos_y+1:
                 return True
+            return False
+        return False
+
+    def check_on_click_move(self, mouse_x : int, mouse_y : int, pos_x : int, pos_y : int, x_size : int):
+        if mouse_x > pos_x:
+            if mouse_x < pos_x+x_size-9:
+                if mouse_y == pos_y+1:
+                    return True
+                return False
             return False
         return False

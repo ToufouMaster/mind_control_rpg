@@ -44,40 +44,95 @@ class StartComputer(Scene):
     """
     The first computer the user can use.
     """
+
+    def draw_all_windows(self, window):
+        # Update all Windows
+        for w in window:
+
+            for t in range(len(desktop_computer.window_logo)):
+                self.addinto(w[1], w[2] + t, desktop_computer.window_logo[t])
+
+            self.addinto(w[1] + 2, w[2] + 1, desktop_computer.window_name_logo[w[0]])
+
     def desktop(self) -> None:  # pylint: disable=R0914
         # TODO: Programming language name: Parcel-3
         """
         Shows the desktop of the first computer.
 
-        :return:  
+        :return:
         """
 
         key=0
 
+        window_moving = [False, 0, 0]
         desktop_closed = False
 
         Window = desktop_computer.Windows(self.renderer)
 
-        Window.add_window(self.renderer, x_pos = 20, y_pos = 1)
+        Window.add_window(1, x_pos=20, y_pos=1)
+        Window.add_window(0, x_pos=55, y_pos=15)
+        Window.add_window(2, x_pos=30, y_pos=35)
+
+        self.draw_all_windows(Window.windows)
 
         self.clear()
-
-        for w in Window.windows:
-
-            for t in range(len(desktop_computer.window_logo)):
-                self.addinto(w[1], w[2]+t, desktop_computer.window_logo[t])
-            
-            self.addinto(w[1]+2, w[2]+1, desktop_computer.window_name_logo[1])
 
         while desktop_closed == False:
             key = self.renderer.stdscr.getch()
             self.renderer.refresh()
+            self.draw_all_windows(Window.windows)
             if key == curses.KEY_MOUSE:
                 mousepos = curses.getmouse()
-                if Window.check_on_click_close(mousepos[1],mousepos[2], w[1], w[2], w[3]):
-                    desktop_closed = True
-            elif key==27:
+            for w in range(len(Window.windows)):
+                if Window.windows[w] != None:
+                    if Window.check_on_click_move(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
+                        if key == curses.KEY_MOUSE:
+                            window_moving = [True, Window.windows[w], w]
+                            self.clear()
+                            self.draw_all_windows(Window.windows)
+
+                #This check is at the end because it manage the Deletion of the Window
+                if Window.check_on_click_close(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
+                    if key == curses.KEY_MOUSE:
+                        Window.remove_window(w)
+                        self.clear()
+                        self.draw_all_windows(Window.windows)
+                        break
+
+            while window_moving[0]:
+                key = self.renderer.stdscr.getch()
+                self.renderer.refresh()
+                self.clear()
+
+                mousepos = curses.getmouse()
+                window_moving[1][1] = mousepos[1]
+                window_moving[1][2] = mousepos[2]
+
+                #Check if too High Coordinate
+                if window_moving[1][2]+window_moving[1][4] > self.renderer.max_y:
+                    window_moving[1][2] = self.renderer.max_y - window_moving[1][4]
+                if window_moving[1][2] < 0:
+                    window_moving[1][2] = 0
+                if window_moving[1][1]+window_moving[1][3] > self.renderer.max_x:
+                    window_moving[1][1] = self.renderer.max_x-window_moving[1][3]
+                if window_moving[1][1] < 0:
+                    window_moving[1][1] = 0
+
+                if key == curses.KEY_MOUSE:
+                    Window.remove_window(window_moving[2])
+
+                    Window.add_window(window_moving[1][0], window_moving[1][1], window_moving[1][2], window_moving[1][3], window_moving[1][4])
+
+                    window_moving = [False, window_moving[1], len(Window.windows)]
+                    self.renderer.refresh()
+                    self.clear()
+
+                self.draw_all_windows(Window.windows)
+
+            if key==27:
                 desktop_closed = True
+
+
 
 
     def start(self) -> None:  # pylint: disable=R0914
@@ -85,17 +140,17 @@ class StartComputer(Scene):
         """
         Shows the init sequence of the first computer.
 
-        :return:  
+        :return:
         """
         animation = start_computer_bios.create_animation(self.renderer)
-        y_pos = animation.start()
+        #y_pos = animation.start()
 
         font_logo = (curses.color_pair(0) | curses.A_ITALIC | curses.A_BOLD | curses.A_BLINK)
         self.addinto_all_centred(LOGO_START, 0.05)
         self.addinto_all_centred(LOGO_DONE, color_pair=font_logo)
 
         animation = start_computer_boot.create_animation(self.renderer)
-        animation.start(y_pos + 1) # leave a blank line
+        #animation.start(y_pos + 1) # leave a blank line
 
         self.clear()
 
