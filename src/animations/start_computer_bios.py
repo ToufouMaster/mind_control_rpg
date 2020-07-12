@@ -42,8 +42,8 @@ def create_animation(renderer: CursesRenderer) -> BootAnimation:
     cpu2 = StyledText(renderer, "CPU 2: Ether Industries Pulse 32 Cores 128 bit 9MHz", 0)
     cpu3 = StyledText(renderer, "CPU 3: Ether Industries Pulse 32 Cores 128 bit 9MHz", 0)
     gpu = StyledText(renderer, "GPU 0: Ether Industries UltraText", 0)
-    gpu_warning = StyledText(renderer, "WARNING: No graphics available, starting in text mode", 3,
-                             bold=True, )
+    #gpu_warning = StyledText(renderer, "WARNING: No graphics available, starting in text mode", 3, bold=True, )
+    gpu_available = StyledText(renderer, "GPU 0: Ether Industries UltraText is Starting with FakeOpenGL1 V1.2", 0)
     boot = StyledText(renderer, "Booting from disk 0...", 1)
     progress = StyledText(renderer, "WORKING", 1, blinking=True, inverted=True)
     finished = StyledText(renderer, "DONE", 2, bold=True)
@@ -53,7 +53,7 @@ def create_animation(renderer: CursesRenderer) -> BootAnimation:
     cpu_steps = [Step(cpu, delay=0.3) for cpu in cpus]
     gpu_step = Step(gpu, delay=0.3)
     bios_steps = cpu_steps + [gpu_step]
-    self_test_steps = [Step(gpu_warning, delay=0.7)]
+    self_test_steps = [Step(gpu_available, delay=0.7)]
 
     # stage definitions
     bios_stage = Stage(renderer, init, progress, finished, bios_steps, 1.5)

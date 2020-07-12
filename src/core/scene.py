@@ -211,3 +211,5 @@ class Scene:
         """
         self.renderer.addtext(x_pos, y_pos, text, color_pair)
         self.refresh()
+
+

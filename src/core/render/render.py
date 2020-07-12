@@ -31,12 +31,12 @@ class CursesRenderer:
 
     def __init__(self) -> None:
         self.stdscr: Any = curses.initscr()  # pylint: disable=E1101
-
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
         curses.start_color()
         self.stdscr.keypad(True)
+        curses.mousemask(curses.ALL_MOUSE_EVENTS)
 
         self.stdscr.box()
 

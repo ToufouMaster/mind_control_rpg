@@ -48,8 +48,8 @@ class StartupScene(Scene):
         Shows a copyright notice and the game's title.
         """
         self.clear()
-        self.sleep_key(0.3)
-        self.addinto_all_centred(STARTUP_MESSAGE, delay=0.1, pager_delay=0)
+        self.sleep_key(0.5)
+        self.addinto_all_centred(STARTUP_MESSAGE, delay=0.05, pager_delay=0)
 
         y_pos = (
             round(
