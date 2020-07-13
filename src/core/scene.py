@@ -21,6 +21,7 @@ This file implements the Scene class, which contains convenience methods for all
 # ------------------------------------------------------------------------------
 
 import curses
+import time
 from typing import Optional, Any
 
 from src.core.render import CursesRenderer
@@ -212,4 +213,8 @@ class Scene:
         self.renderer.addtext(x_pos, y_pos, text, color_pair)
         self.refresh()
 
-
+    def timer(self, timer : int = 1):
+        Time = time.perf_counter()
+        while time.perf_counter() > Time+timer:
+            pass
+        return True

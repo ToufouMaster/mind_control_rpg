@@ -45,14 +45,34 @@ class StartComputer(Scene):
     The first computer the user can use.
     """
 
+
     def draw_all_windows(self, window):
+
+        #BackGround Setup
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        font_window = (curses.color_pair(1))
+        font_bg = (curses.color_pair(0) | curses.A_ITALIC | curses.A_BOLD)
+
+        #BackGround Display
+        self.addinto_all_centred(LOGO_START, color_pair=font_bg)
+        self.addinto_all_centred(LOGO_DONE, color_pair=font_bg)
+
+        #Icons Setup
+        window.generate_program_icons_desktop_location()
+
+        #Icons Display
+        for d in range(len(window.desktop_buttons)):
+            for t in range(len(desktop_computer.desktop_button_logo)):
+                self.addinto(window.desktop_icons_loc[d][0], window.desktop_icons_loc[d][1]+t, desktop_computer.desktop_button_logo[t], color_pair=font_window)
+            self.addinto(window.desktop_icons_loc[d][0]-1, window.desktop_icons_loc[d][1]+4, desktop_computer.window_name_logo[window.desktop_buttons[d]])
+
         # Update all Windows
-        for w in window:
+        for w in window.windows:
 
             for t in range(len(desktop_computer.window_logo)):
-                self.addinto(w[1], w[2] + t, desktop_computer.window_logo[t])
+                self.addinto(w[1], w[2] + t, desktop_computer.window_logo[t], font_window)
 
-            self.addinto(w[1] + 2, w[2] + 1, desktop_computer.window_name_logo[w[0]])
+            self.addinto(w[1] + 2, w[2], desktop_computer.window_name_logo[w[0]], font_window)
 
     def desktop(self) -> None:  # pylint: disable=R0914
         # TODO: Programming language name: Parcel-3
@@ -73,31 +93,38 @@ class StartComputer(Scene):
         Window.add_window(0, x_pos=55, y_pos=15)
         Window.add_window(2, x_pos=30, y_pos=35)
 
-        self.draw_all_windows(Window.windows)
-
         self.clear()
+
+        self.draw_all_windows(Window)
 
         while desktop_closed == False:
             key = self.renderer.stdscr.getch()
             self.renderer.refresh()
-            self.draw_all_windows(Window.windows)
+            self.draw_all_windows(Window)
             if key == curses.KEY_MOUSE:
                 mousepos = curses.getmouse()
             for w in range(len(Window.windows)):
                 if Window.windows[w] != None:
-                    if Window.check_on_click_move(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
-                        if key == curses.KEY_MOUSE:
+                    if key == curses.KEY_MOUSE:
+                        if Window.check_on_click_move(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
                             window_moving = [True, Window.windows[w], w]
                             self.clear()
-                            self.draw_all_windows(Window.windows)
+                            self.draw_all_windows(Window)
 
                 #This check is at the end because it manage the Deletion of the Window
-                if Window.check_on_click_close(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
-                    if key == curses.KEY_MOUSE:
+                if key == curses.KEY_MOUSE:
+                    if Window.check_on_click_close(mousepos[1],mousepos[2], Window.windows[w][1], Window.windows[w][2], Window.windows[w][3]):
                         Window.remove_window(w)
                         self.clear()
-                        self.draw_all_windows(Window.windows)
+                        self.draw_all_windows(Window)
                         break
+
+            for di in range(len(Window.desktop_buttons)):
+                if key == curses.KEY_MOUSE:
+                    if Window.check_on_desktop_icon_open(mousepos[1],mousepos[2],Window.desktop_icons_loc[di][0],Window.desktop_icons_loc[di][1]-1,Window.desktop_icons_loc[di][2],Window.desktop_icons_loc[di][3], Window.desktop_buttons[di]):
+                        Window.add_window(Window.desktop_buttons[di], x_pos=mousepos[1], y_pos=mousepos[2])
+                        self.clear()
+                        self.draw_all_windows(Window)
 
             while window_moving[0]:
                 key = self.renderer.stdscr.getch()
@@ -127,7 +154,7 @@ class StartComputer(Scene):
                     self.renderer.refresh()
                     self.clear()
 
-                self.draw_all_windows(Window.windows)
+                self.draw_all_windows(Window)
 
             if key==27:
                 desktop_closed = True
