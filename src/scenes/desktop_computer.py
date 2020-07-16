@@ -21,7 +21,12 @@ This scene is for the start of the game, this computer is the first that the use
 # ------------------------------------------------------------------------------
 
 import curses
+import os
+import pygame
+
 from pathlib import Path
+from pydub import AudioSegment
+from pydub import playback
 
 from src.animations import start_computer_bios, start_computer_boot
 from src.core.scene import Scene
@@ -30,6 +35,10 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.absolute()
 WINDOW_PATH = PROJECT_ROOT / "assets" / "ether_industries" / "window"
 WINDOWS_NAME_PATH = PROJECT_ROOT / "assets" / "ether_industries" / "windows_name"
 DESKTOP_BUTTON_PATH = PROJECT_ROOT / "assets" / "ether_industries" / "desktop_program_button"
+AUDIO_PATH = PROJECT_ROOT / "assets" / "ether_industries" / "audio"
+
+audio = []
+audio_names = []
 
 with WINDOW_PATH.open("r") as f:
     window_logo = [line.strip() for line in f]
@@ -42,6 +51,12 @@ with WINDOWS_NAME_PATH.open("r") as f:
 with DESKTOP_BUTTON_PATH.open("r") as f:
     desktop_button_logo = [line.strip() for line in f]
     DESKTOP_BUTTON = "\n".join(window_name_logo)
+
+for f in os.listdir(AUDIO_PATH):
+    audio_names.append(f)
+    audio.append(AUDIO_PATH / f)
+
+pygame.mixer.init()
 
 class Windows(Scene):
     """

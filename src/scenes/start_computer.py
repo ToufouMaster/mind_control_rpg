@@ -21,6 +21,8 @@ This scene is for the start of the game, this computer is the first that the use
 # ------------------------------------------------------------------------------
 
 import curses
+import os
+
 from pathlib import Path
 
 from src.animations import start_computer_bios, start_computer_boot
@@ -45,7 +47,6 @@ class StartComputer(Scene):
     The first computer the user can use.
     """
 
-
     def draw_all_windows(self, window):
 
         #BackGround Setup
@@ -65,6 +66,8 @@ class StartComputer(Scene):
             for t in range(len(desktop_computer.desktop_button_logo)):
                 self.addinto(window.desktop_icons_loc[d][0], window.desktop_icons_loc[d][1]+t, desktop_computer.desktop_button_logo[t], color_pair=font_window)
             self.addinto(window.desktop_icons_loc[d][0]-1, window.desktop_icons_loc[d][1]+4, desktop_computer.window_name_logo[window.desktop_buttons[d]])
+            if desktop_computer.window_name_logo[window.desktop_buttons[d]] == "Sound Box":
+                pass
 
         # Update all Windows
         for w in window.windows:
@@ -169,6 +172,7 @@ class StartComputer(Scene):
 
         :return:
         """
+
         animation = start_computer_bios.create_animation(self.renderer)
         #y_pos = animation.start()
 
@@ -178,6 +182,9 @@ class StartComputer(Scene):
 
         animation = start_computer_boot.create_animation(self.renderer)
         #animation.start(y_pos + 1) # leave a blank line
+
+        #desktop_computer.pygame.mixer.music.load("/home/toufoumaster/Bureau/RPG Kaïs/mind_control_rpg/assets/ether_industries/audio/test.mp3")
+        #desktop_computer.pygame.mixer.music.play(-1)
 
         self.clear()
 
